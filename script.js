@@ -1,3 +1,8 @@
+// ===============================
+// Read News & Earn - Part 1
+// ===============================
+
+// ===== Monetag SmartLink =====
 const SMART_LINK = "https://omg10.com/4/11436609";
 
 let adClicks = Number(localStorage.getItem("adClicks")) || 0;
@@ -6,105 +11,122 @@ function showSmartLink() {
     adClicks++;
     localStorage.setItem("adClicks", adClicks);
 
-    // Show SmartLink every 3rd user interaction
+    // Open SmartLink every 3rd click
     if (adClicks % 3 === 0) {
         window.open(SMART_LINK, "_blank");
     }
-}const newsContainer = document.getElementById("newsContainer");
+}
+
+// ===== DOM =====
+const newsContainer = document.getElementById("newsContainer");
 const coinEl = document.getElementById("coins");
 const walletEl = document.getElementById("walletCoins");
 
+// ===== Wallet =====
 let coins = Number(localStorage.getItem("coins")) || 0;
 
 updateWallet();
+
+// Load first news
 loadNews();
 
+// ===============================
+// Load News
+// ===============================
 async function loadNews(keyword = "india") {
 
-    newsContainer.innerHTML = "<div class='loading'>Loading Latest News...</div>";
+    newsContainer.innerHTML =
+    "<div class='loading'>Loading Latest News...</div>";
 
     try {
 
-        const controller = new AbortController();
-
-        const timeout = setTimeout(() => controller.abort(), 10000);
-
         const response = await fetch(
-            `/.netlify/functions/news?q=${encodeURIComponent(keyword)}`,
-            { signal: controller.signal }
+            `/.netlify/functions/news?q=${encodeURIComponent(keyword)}`
         );
 
-        clearTimeout(timeout);
-
-        if (!response.ok) {
-            throw new Error("Server Error: " + response.status);
-        }
+        if (!response.ok)
+            throw new Error("Server Error");
 
         const data = await response.json();
 
         if (!data.articles || data.articles.length === 0) {
-            newsContainer.innerHTML = "<div class='loading'>No News Found</div>";
+
+            newsContainer.innerHTML =
+            "<div class='loading'>No News Found</div>";
+
             return;
+
         }
 
         displayNews(data.articles);
 
-    } catch (err) {
-
-        console.error(err);
-
-        newsContainer.innerHTML = `
-        <div class="loading">
-            ${err.message}
-            <br><br>
-            <button onclick="loadNews()">Retry</button>
-        </div>`;
     }
-}
-
-        displayNews(data.articles);
-
-    } catch (error) {
+    catch (error) {
 
         console.error(error);
 
         newsContainer.innerHTML = `
         <div class="loading">
-            ${error.message}
-        </div>
-        `;
+
+            Unable to load news.
+
+            <br><br>
+
+            <button onclick="loadNews()">
+
+            Retry
+
+            </button>
+
+        </div>`;
+
     }
 
 }
 
+// ===============================
+// Display News
+// ===============================
 function displayNews(articles) {
 
     newsContainer.innerHTML = "";
 
     articles.forEach(article => {
 
+        const image =
+        article.image ||
+        "https://via.placeholder.com/600x350?text=News";
+
         const card = document.createElement("div");
 
         card.className = "card";
 
         card.innerHTML = `
-            <img src="${article.image || 'https://via.placeholder.com/600x350?text=News'}">
 
-            <div class="content">
+        <img src="${image}">
 
-                <h3>${article.title || "No Title"}</h3>
+        <div class="content">
 
-                <p>${article.description || "No description available."}</p>
+        <h3>${article.title}</h3>
 
-                <button class="read-btn">
-                    Read & Earn
-                </button>
+        <p>${article.description || ""}</p>
 
-            </div>
+        <button class="read-btn">
+
+        Read & Earn
+
+        </button>
+
+        </div>
+
         `;
 
-        card.querySelector(".read-btn").addEventListener("click", () => {
+        card
+        .querySelector(".read-btn")
+        .addEventListener("click", () => {
+
             startReading(article.url);
+
         });
 
         newsContainer.appendChild(card);
@@ -113,12 +135,18 @@ function displayNews(articles) {
 
 }
 
+// ===============================
+// Search
+// ===============================
 function searchNews() {
-showSmartLink();
-    const keyword = document
-        .getElementById("search")
-        .value
-        .trim();
+
+    showSmartLink();
+
+    const keyword =
+    document
+    .getElementById("search")
+    .value
+    .trim();
 
     if (!keyword) return;
 
@@ -126,152 +154,86 @@ showSmartLink();
 
 }
 
+// ===============================
+// Category
+// ===============================
 function category(name) {
-   showSmartLink();
-    loadNews(name);
-}
-
-const SMART_LINK = "https://omg10.com/4/11436609";
-
-function startReading(newsUrl) {
 
     showSmartLink();
 
-window.open(newsUrl, "_blank");// Open Monetag SmartLink in a new tab
-    window.open(SMART_LINK, "_blank");
+    loadNews(name);
 
-    // Open the news article after a short delay
-    setTimeout(() => {
-        window.open(newsUrl, "_blank");
-    }, 500);
+}// ===============================
+// Read & Earn
+// ===============================
+function startReading(newsUrl) {
 
-    alert("Read for 20 seconds to earn 1 coin.");
+    // Show SmartLink occasionally
+    showSmartLink();
 
-    setTimeout(() => {
+    // Open article
+    window.open(newsUrl, "_blank");
 
-        coins++;
+    // Prevent duplicate rewards
+    const key = "reward_" + btoa(newsUrl);
 
-        localStorage.setItem("coins", coins);
-
-        updateWallet();
-
-        alert("🎉 You earned 1 coin!");
-
-    }, 20000);
-}
-
-function updateWallet() {
-
-    coinEl.textContent = coins;
-    walletEl.textContent = coins;
-
-}
-
-document.getElementById("withdrawBtn").addEventListener("click", () => {
-
-    if (coins < 50) {
-        alert("Minimum withdrawal is 50 coins.");
+    if (localStorage.getItem(key)) {
+        alert("You already earned from this article.");
         return;
     }
 
-    const upi = prompt("Enter your UPI ID");
+    let seconds = 20;
 
-    if (!upi) return;
+    const timer = setInterval(() => {
 
-    alert(`Withdrawal Request Submitted\n\nUPI: ${upi}\nCoins: ${coins}`);
+        seconds--;
 
-    coins = 0;
+        console.log("Reward in:", seconds);
 
-    localStorage.setItem("coins", coins);
+        if (seconds <= 0) {
 
-    updateWallet();
+            clearInterval(timer);
 
-});function displayNews(articles) {
+            localStorage.setItem(key, "1");
 
-    newsContainer.innerHTML = "";
+            coins++;
 
-    articles.forEach(article => {
+            localStorage.setItem("coins", coins);
 
-        const card = document.createElement("div");
+            updateWallet();
 
-        card.className = "card";
+            alert("🎉 Congratulations!\n\nYou earned 1 coin.");
 
-        card.innerHTML = `
-            <img src="${article.image || 'https://via.placeholder.com/600x350?text=News'}">
+        }
 
-            <div class="content">
-
-                <h3>${article.title}</h3>
-
-                <p>${article.description || ""}</p>
-
-                <button class="read-btn">
-                    Read & Earn
-                </button>
-
-            </div>
-        `;
-
-        card.querySelector(".read-btn").onclick = () => {
-            startReading(article.url);
-        };
-
-        newsContainer.appendChild(card);
-
-    });
+    }, 1000);
 
 }
 
-function searchNews() {
-showSmartLink();
-    const keyword = document
-        .getElementById("search")
-        .value
-        .trim();
-
-    if (keyword === "") return;
-
-    loadNews(keyword);
-
-}
-
-function category(name) {
-   showSmartLink();
-    loadNews(name);
-}
-
-function startReading(url) {
-showSmartLink();
-    window.open(url, "_blank");
-
-    alert("Read the article for 20 seconds to earn 1 coin.");
-
-    setTimeout(() => {
-
-        coins += 1;
-
-        localStorage.setItem("coins", coins);
-
-        updateWallet();
-
-        alert("🎉 You earned 1 coin!");
-
-    }, 20000);
-
-}
-
+// ===============================
+// Wallet
+// ===============================
 function updateWallet() {
 
-    coinEl.textContent = coins;
+    if (coinEl)
+        coinEl.textContent = coins;
 
-    walletEl.textContent = coins;
+    if (walletEl)
+        walletEl.textContent = coins;
 
 }
 
-document
-.getElementById("withdrawBtn")
-.addEventListener("click", () => {
-showSmartLink();
+// ===============================
+// Withdraw
+// ===============================
+const withdrawBtn = document.getElementById("withdrawBtn");
+
+if (withdrawBtn) {
+
+withdrawBtn.addEventListener("click", () => {
+
+    showSmartLink();
+
     if (coins < 50) {
 
         alert("Minimum withdrawal is 50 coins.");
@@ -285,10 +247,13 @@ showSmartLink();
     if (!upi) return;
 
     alert(
-        "Withdrawal request submitted.\n\nUPI: " +
-        upi +
-        "\nCoins: " +
-        coins
+`Withdrawal Request Submitted
+
+UPI ID:
+${upi}
+
+Coins:
+${coins}`
     );
 
     coins = 0;
@@ -298,3 +263,18 @@ showSmartLink();
     updateWallet();
 
 });
+
+}
+
+// ===============================
+// Auto Refresh News Every 5 Minutes
+// ===============================
+setInterval(() => {
+
+    loadNews();
+
+}, 300000);
+
+// ===============================
+// End of Script
+// ===============================
