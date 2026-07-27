@@ -209,7 +209,7 @@ document.getElementById("withdrawBtn").addEventListener("click", () => {
 }
 
 function searchNews() {
-
+showSmartLink();
     const keyword = document
         .getElementById("search")
         .value
@@ -222,11 +222,12 @@ function searchNews() {
 }
 
 function category(name) {
+   showSmartLink();
     loadNews(name);
 }
 
 function startReading(url) {
-
+showSmartLink();
     window.open(url, "_blank");
 
     alert("Read the article for 20 seconds to earn 1 coin.");
@@ -256,7 +257,7 @@ function updateWallet() {
 document
 .getElementById("withdrawBtn")
 .addEventListener("click", () => {
-
+showSmartLink();
     if (coins < 50) {
 
         alert("Minimum withdrawal is 50 coins.");
