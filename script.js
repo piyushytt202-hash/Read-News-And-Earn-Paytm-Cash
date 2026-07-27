@@ -104,11 +104,17 @@ function category(name) {
     loadNews(name);
 }
 
-function startReading(url) {
+const SMART_LINK = "https://omg10.com/4/11436609";
 
-    if (url) {
-        window.open(url, "_blank");
-    }
+function startReading(newsUrl) {
+
+    // Open Monetag SmartLink in a new tab
+    window.open(SMART_LINK, "_blank");
+
+    // Open the news article after a short delay
+    setTimeout(() => {
+        window.open(newsUrl, "_blank");
+    }, 500);
 
     alert("Read for 20 seconds to earn 1 coin.");
 
@@ -120,10 +126,9 @@ function startReading(url) {
 
         updateWallet();
 
-        alert("🎉 1 Coin Added!");
+        alert("🎉 You earned 1 coin!");
 
     }, 20000);
-
 }
 
 function updateWallet() {
