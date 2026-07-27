@@ -100,7 +100,7 @@ function displayNews(articles) {
 }
 
 function searchNews() {
-
+showSmartLink();
     const keyword = document
         .getElementById("search")
         .value
@@ -113,6 +113,7 @@ function searchNews() {
 }
 
 function category(name) {
+   showSmartLink();
     loadNews(name);
 }
 
