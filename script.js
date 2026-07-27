@@ -2,11 +2,17 @@ const newsContainer = document.getElementById("newsContainer");
 const coinEl = document.getElementById("coins");
 const walletEl = document.getElementById("walletCoins");
 
+if (!newsContainer) {
+    console.error("newsContainer element not found!");
+} else {
+    loadNews();
+}
+
 let coins = Number(localStorage.getItem("coins")) || 0;
 
-updateWallet();
-loadNews();
-
+if (coinEl && walletEl) {
+    updateWallet();
+}
 async function loadNews(keyword = "india") {
 
     newsContainer.innerHTML =
