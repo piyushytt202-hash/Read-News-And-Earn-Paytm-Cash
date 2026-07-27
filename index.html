@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Read News & Earn</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        📰 Read News & Earn
+    </div>
+
+    <div class="wallet">
+        Balance:
+        <span id="coins">0</span>
+        Coins
+    </div>
+</header>
+
+<section class="hero">
+    <h1>Read News & Earn Rewards</h1>
+    <p>Read genuine news and earn reward points.</p>
+
+    <div class="search-box">
+        <input
+            type="text"
+            id="search"
+            placeholder="Search News..."
+        >
+
+        <button onclick="searchNews()">
+            Search
+        </button>
+    </div>
+</section>
+
+<section class="categories">
+
+<button onclick="category('general')">General</button>
+
+<button onclick="category('technology')">Technology</button>
+
+<button onclick="category('business')">Business</button>
+
+<button onclick="category('sports')">Sports</button>
+
+<button onclick="category('health')">Health</button>
+
+<button onclick="category('science')">Science</button>
+
+</section>
+
+<section id="newsContainer">
+
+<div class="loading">
+Loading Latest News...
+</div>
+
+</section>
+
+<div class="withdraw">
+
+<h2>Wallet</h2>
+
+<p>Total Coins</p>
+
+<h1 id="walletCoins">0</h1>
+
+<button id="withdrawBtn">
+Request Withdrawal
+</button>
+
+</div>
+
+<footer>
+
+<p>
+
+© 2026 Read News & Earn
+
+</p>
+
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
