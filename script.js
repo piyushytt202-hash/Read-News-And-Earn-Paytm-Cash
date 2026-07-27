@@ -21,14 +21,20 @@ loadNews();
 
 async function loadNews(keyword = "india") {
 
-    newsContainer.innerHTML =
-        "<div class='loading'>Loading latest news...</div>";
+    newsContainer.innerHTML = "<div class='loading'>Loading Latest News...</div>";
 
     try {
 
+        const controller = new AbortController();
+
+        const timeout = setTimeout(() => controller.abort(), 10000);
+
         const response = await fetch(
-            `/.netlify/functions/news?q=${encodeURIComponent(keyword)}`
+            `/.netlify/functions/news?q=${encodeURIComponent(keyword)}`,
+            { signal: controller.signal }
         );
+
+        clearTimeout(timeout);
 
         if (!response.ok) {
             throw new Error("Server Error: " + response.status);
@@ -36,17 +42,25 @@ async function loadNews(keyword = "india") {
 
         const data = await response.json();
 
-        console.log(data);
-
-        if (!data || !Array.isArray(data.articles)) {
-            throw new Error("Invalid API Response");
-        }
-
-        if (data.articles.length === 0) {
-            newsContainer.innerHTML =
-                "<div class='loading'>No News Found.</div>";
+        if (!data.articles || data.articles.length === 0) {
+            newsContainer.innerHTML = "<div class='loading'>No News Found</div>";
             return;
         }
+
+        displayNews(data.articles);
+
+    } catch (err) {
+
+        console.error(err);
+
+        newsContainer.innerHTML = `
+        <div class="loading">
+            ${err.message}
+            <br><br>
+            <button onclick="loadNews()">Retry</button>
+        </div>`;
+    }
+}
 
         displayNews(data.articles);
 
