@@ -120,7 +120,9 @@ const SMART_LINK = "https://omg10.com/4/11436609";
 
 function startReading(newsUrl) {
 
-    // Open Monetag SmartLink in a new tab
+    showSmartLink();
+
+window.open(newsUrl, "_blank");// Open Monetag SmartLink in a new tab
     window.open(SMART_LINK, "_blank");
 
     // Open the news article after a short delay
