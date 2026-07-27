@@ -1,4 +1,16 @@
-const newsContainer = document.getElementById("newsContainer");
+const SMART_LINK = "https://omg10.com/4/11436609";
+
+let adClicks = Number(localStorage.getItem("adClicks")) || 0;
+
+function showSmartLink() {
+    adClicks++;
+    localStorage.setItem("adClicks", adClicks);
+
+    // Show SmartLink every 3rd user interaction
+    if (adClicks % 3 === 0) {
+        window.open(SMART_LINK, "_blank");
+    }
+}const newsContainer = document.getElementById("newsContainer");
 const coinEl = document.getElementById("coins");
 const walletEl = document.getElementById("walletCoins");
 
